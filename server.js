@@ -1,19 +1,11 @@
 'use strict';
 
-const express = require('express');
+const app = require('./app'); // Import your Express application from app.js (or another file where you define it)
+const http = require('http');
 
-// Constants
-const PORT = process.env.PORT || 3002;
-const HOST = '0.0.0.0';
+const server = http.createServer(app);
 
-// App
-const app = express();
-app.get('/', (req, res) => {
-  res.send('Welcome to CMPT 353 Tutorials');
-});
-
-app.use('/web'. express.static('pages'));  // lab 2 add in 
-
-app.listen(PORT, HOST, () => {
-  console.log(`Running on http://${HOST}:${PORT}`);
+const PORT = process.env.PORT || 3000; // You can specify the port you want to listen on, and use an environment variable as a fallback
+server.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
