@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Posting System</title>
+</head>
+<body style="color: rgb(53, 72, 120); background-color: #c3e2ff;">
+
+    <h1 style="color: #ff849c;">Dear Diary ☺</h1>
+    <form id="postForm">
+        <label for="topic">Topic:</label>
+        <input type="text" name="topic" id="topic" required>
+        <br>
+        <br>
+        <label for="data">Data:</label>
+        <textarea name="data" id="data" required></textarea>
+        <br>
+        <br>
+        <button style="color: #e2effc; background-color: #ff849c;" type="button" onclick="postMessage()">Post</button>
+    </form>
+
+    <div id="Data"></div>
+
+    <br>
+    <h2 style="color:#387bba">Posts:</h2>
+    <ul id="postsList"></ul> <!-- Add a list for displaying posts -->
+
+    <script>
+        // Function to retrieve and display existing posts
+        function displayPosts() {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', '/getposts', true);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    const posts = JSON.parse(xhr.responseText);
+                    const postsList = document.getElementById('postsList');
+                    postsList.innerHTML = ''; // Clear previous posts
+                    posts.forEach(function (post) {
+                        const listItem = document.createElement('li');
+                        listItem.textContent = post;
+                        postsList.appendChild(listItem);
+                    });
+                }
+            };
+            xhr.send();
+        }
+
+        // Function to post a message
+        function postMessage() {
+            const topic = document.getElementById('topic').value;
+            const data = document.getElementById('data').value;
+
+            const xhr = new XMLHttpRequest();
+            xhr.open('POST', '/postmessage', true);
+            xhr.setRequestHeader('Content-Type', 'application/json');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        alert('Message posted successfully.');
+                        displayPosts(); // Refresh posts after a new post is made
+                    } else {
+                        alert('Error posting message.');
+                    }
+                }
+            };
+
+            const message = JSON.stringify({ topic, data });
+            xhr.send(message);
+        }
+
+        // Initial call to display existing posts
+        displayPosts();
+    </script>
+</body>
+</html>
